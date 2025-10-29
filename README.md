@@ -39,6 +39,10 @@ dotnet build -c Debug
 
 The first run will train a model if none exists. The model is saved as `model.zip` and reused for future predictions.
 
+Requirements
+
+- .NET SDK 8.0 or newer is recommended to build and run this project. The GitHub Actions CI uses .NET 8.
+
 Development
 
 - Build and test workflow runs on push/PR to main branch.
