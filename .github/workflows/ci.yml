@@ -20,11 +20,11 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: MLAppTensorflow
+      working-directory: .
 
     - name: Build
       run: dotnet build --no-restore
-      working-directory: MLAppTensorflow
+      working-directory: .
 
     - name: Setup Python for smoke test
       uses: actions/setup-python@v4
@@ -35,4 +35,4 @@ jobs:
       run: |
         chmod +x scripts/smoke_test.sh
         ./scripts/smoke_test.sh
-      working-directory: MLAppTensorflow
+      working-directory: .
