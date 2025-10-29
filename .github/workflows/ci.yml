@@ -22,6 +22,14 @@ jobs:
       run: dotnet restore
       working-directory: .
 
+    - name: Debug runner environment
+      run: |
+        echo "PWD: $(pwd)"
+        echo "Listing repository root contents:"; ls -la
+        echo "Contents of project folder:"; ls -la MLAppTensorflow || true
+        dotnet --info
+      working-directory: .
+
     - name: Build
       run: dotnet build --no-restore
       working-directory: .
