@@ -158,11 +158,12 @@ class ProgramCli
         var trainData = split.TrainSet;
         var testData = split.TestSet;
 
-        // Use FeaturizeText with controlled options (disable char extractor) to avoid variable-size vectors
-        // Build an explicit text pipeline: tokenize -> remove stopwords -> n-grams -> trainer
+        // Build an explicit text pipeline: tokenize -> remove stopwords -> map tokens to keys -> n-grams -> trainer
+        // Ngram extractor expects key-typed inputs, so convert token strings to key indices first.
         var pipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(SentimentDataCli.Text))
             .Append(mlContext.Transforms.Text.RemoveDefaultStopWords("Tokens", "Tokens"))
-            .Append(mlContext.Transforms.Text.ProduceNgrams("Features", "Tokens", ngramLength: 2, useAllLengths: true))
+            .Append(mlContext.Transforms.Conversion.MapValueToKey("TokenKeys", "Tokens"))
+            .Append(mlContext.Transforms.Text.ProduceNgrams("Features", "TokenKeys", ngramLength: 2, useAllLengths: true))
             .Append(mlContext.BinaryClassification.Trainers.SdcaLogisticRegression(labelColumnName: nameof(SentimentDataCli.Label), featureColumnName: "Features"));
 
         var model = pipeline.Fit(trainData);
