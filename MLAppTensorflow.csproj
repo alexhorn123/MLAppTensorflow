@@ -11,4 +11,9 @@
     <PackageReference Include="Microsoft.ML" Version="2.0.0" />
   </ItemGroup>
 
+  <!-- Exclude the old Program.cs (top-level "Hello, World!") so ProgramCli is used as the entry point -->
+  <ItemGroup>
+    <Compile Remove="Program.cs" />
+  </ItemGroup>
+
 </Project>
