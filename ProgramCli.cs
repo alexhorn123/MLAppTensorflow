@@ -160,11 +160,12 @@ class ProgramCli
 
         // Use FeaturizeText with controlled options and disable the char extractor to avoid
         // variable-size char feature vectors that can cause schema mismatches on the trainer.
-        // Use hashed n-grams so the output 'Features' is a fixed-size vector (2^numberOfBits).
-        // This avoids schema issues caused by variable-length vectors while keeping n-gram features.
+        // Tokenize -> remove stop words -> map tokens to keys -> hashed n-grams -> trainer
+        // N-gram hashing expects Key-typed input tokens, and produces fixed-size feature vectors.
         var pipeline = mlContext.Transforms.Text.TokenizeIntoWords("Tokens", nameof(SentimentDataCli.Text))
             .Append(mlContext.Transforms.Text.RemoveDefaultStopWords("Tokens", "Tokens"))
-            .Append(mlContext.Transforms.Text.ProduceHashedNgrams("Features", "Tokens", numberOfBits: 14, ngramLength: 2, useAllLengths: true))
+            .Append(mlContext.Transforms.Conversion.MapValueToKey("TokenKeys", "Tokens"))
+            .Append(mlContext.Transforms.Text.ProduceHashedNgrams("Features", "TokenKeys", numberOfBits: 14, ngramLength: 2, useAllLengths: true))
             .Append(mlContext.BinaryClassification.Trainers.SdcaLogisticRegression(labelColumnName: nameof(SentimentDataCli.Label), featureColumnName: "Features"));
 
         var model = pipeline.Fit(trainData);
